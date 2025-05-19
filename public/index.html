@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Subscription</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f9f9f9;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .container {
+        background-color: #fff;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 450px;
+        margin-bottom: 20px;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-top: 0;
+      }
+      h2 {
+        color: #444;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+      }
+      label {
+        display: block;
+        margin-bottom: 6px;
+        color: #555;
+        font-weight: bold;
+      }
+      input[type="email"],
+      input[type="text"],
+      select {
+        width: calc(100% - 22px);
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        padding: 12px 18px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .message {
+        padding: 12px;
+        margin-top: 15px;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 0.95em;
+      }
+      .success {
+        background-color: #e6ffed;
+        color: #006421;
+        border: 1px solid #a3e9b8;
+      }
+      .error {
+        background-color: #ffe6e6;
+        color: #a00000;
+        border: 1px solid #f0a8a8;
+      }
+      hr {
+        border: 0;
+        height: 1px;
+        background: #ddd;
+        margin: 30px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Weather Service</h1>
+
+      <h2>Subscribe for Updates</h2>
+      <form id="subscriptionForm">
+        <div>
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+        <div>
+          <label for="city">City:</label>
+          <input type="text" id="city" name="city" required />
+        </div>
+        <div>
+          <label for="frequency">Frequency:</label>
+          <select id="frequency" name="frequency" required>
+            <option value="hourly">Hourly</option>
+            <option value="daily">Daily</option>
+          </select>
+        </div>
+        <button type="submit">Subscribe</button>
+      </form>
+      <div id="formMessage" class="message" style="display: none"></div>
+    </div>
+
+    <div class="container">
+      <h2>Get Current Weather</h2>
+      <form id="weatherForm">
+        <div>
+          <label for="weatherCity">City:</label>
+          <input type="text" id="weatherCity" name="weatherCity" required />
+        </div>
+        <button type="submit">Get Weather</button>
+      </form>
+      <div id="weatherResult" class="message" style="display: none"></div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

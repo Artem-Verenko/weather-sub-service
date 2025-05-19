@@ -1,0 +1,90 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ${NODE_ENV:-development} # Use development target by default, can be overridden
+    container_name: weather_api_app
+    restart: unless-stopped
+    env_file:
+      - .env # Load environment variables from .env file
+    environment:
+      # Variables defined here override those in .env if names conflict
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=${APP_PORT:-3000} # Construct DATABASE_URL if your app uses it, or use individual DB_ vars
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT_INTERNAL:-5432}/${DB_NAME}
+      # Individual DB vars might still be needed by some tools or the app itself
+      - DB_HOST=${DB_HOST} # Service name of the db container
+      - DB_PORT=${DB_PORT_INTERNAL:-5432} # Port inside the DB container
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_CLIENT=${DB_CLIENT:-pg}
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}" # Use host PORT from .env, default to 3000
+    volumes:
+      # For development: mount source code for live reloading
+      # For production: code is baked into the image, so this might be removed or changed
+      - ./src:/usr/src/app/src # Mount src for live changes
+      - ./public:/usr/src/app/public
+      # Add a named volume for node_modules to prevent host node_modules from overwriting container's
+      - node_modules_cache:/usr/src/app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy # Wait for DB to be healthy
+    # Command override for development (uses nodemon)
+    # For production, the Dockerfile's CMD will be used.
+    # You can create a docker-compose.prod.yml to override this for production.
+    command: >
+      sh -c '
+        echo "Current NODE_ENV: $NODE_ENV"
+        if [ "$NODE_ENV" = "development" ]; then
+          echo "Development mode: installing deps & running dev server..."
+          npm install --prefer-offline --no-audit --progress=false
+          npm run dev
+        else
+          echo "Production mode: running migrations & starting server..."
+          npm run migrate:prod && npm run start:prod
+        fi
+      '
+
+    networks:
+      - app_network
+
+  db:
+    image: postgres:15-alpine
+    container_name: weather_api_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      # Map host DB_HOST_PORT (from .env, default 5433) to container port 5432
+      - "${DB_PORT_LOCAL:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      # Use defaults in healthcheck for robustness if variables aren't perfectly set
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-postgres}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_network
+
+volumes:
+  postgres_data: # Defines the named volume for PostgreSQL data persistence
+    driver: local
+  node_modules_cache: # Defines the named volume for node_modules cache
+    driver: local
+
+networks:
+  app_network:
+    driver: bridge # Default driver, good for single-host setups
