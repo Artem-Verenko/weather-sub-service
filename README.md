@@ -1,7 +1,11 @@
 # Weather Subscription Service
 
 This service allows users to subscribe to regular weather forecast updates for a selected city.
+![image](https://github.com/user-attachments/assets/44affd5e-e01b-4159-8745-d849afc369be)
+![image](https://github.com/user-attachments/assets/29e18613-6b55-4255-b975-3d003f24b938)
+![image](https://github.com/user-attachments/assets/8dd114ea-102d-4914-9fdc-12e5925aeda4)
 
+Hosted on AWS EC2: http://44.203.146.21:3000/
 ## Features
 
 - Get current weather for a city.
