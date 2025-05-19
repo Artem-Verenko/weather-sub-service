@@ -13,8 +13,10 @@ services:
     environment:
       # Variables defined here override those in .env if names conflict
       - NODE_ENV=${NODE_ENV:-development}
-      - PORT=${APP_PORT:-3000} # Construct DATABASE_URL if your app uses it, or use individual DB_ vars
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT_INTERNAL:-5432}/${DB_NAME}
+      - PORT=${APP_PORT:-3000} # Construct DATABASE_URL if your app uses it, or use individual DB_ vars      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT_INTERNAL:-5432}/${DB_NAME}
+      # APP_BASE_URL will use localhost in dev mode, or the environment variable in production
+      - APP_BASE_URL=${APP_BASE_URL:-http://localhost:${APP_PORT:-3000}}
+      - HOST=${HOST:-localhost}
       # Individual DB vars might still be needed by some tools or the app itself
       - DB_HOST=${DB_HOST} # Service name of the db container
       - DB_PORT=${DB_PORT_INTERNAL:-5432} # Port inside the DB container

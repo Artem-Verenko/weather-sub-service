@@ -30,13 +30,12 @@ async function startServer() {
     console.error("Exiting due to database connection failure.");
     process.exit(1);
   }
-
   await runMigrations();
 
   app.listen(config.port, () => {
+    console.log(`Node environment: ${config.nodeEnv}`);
     console.log(`Server running on ${config.appBaseUrl}`);
     console.log(`Swagger UI available at ${config.appBaseUrl}/api-docs`);
-    console.log(`Node environment: ${config.nodeEnv}`);
     if (config.nodeEnv !== "test") {
       // Don't start schedulers in test environment
       startSchedulers();
